@@ -1,4 +1,5 @@
 #![no_std]
+extern crate alloc;
 #![no_main]
 
 core::arch::global_asm!(include_str!("../boot.S"));
@@ -35,6 +36,25 @@ unsafe extern "C" {
     static __heap_start: u8;
     static __heap_end: u8;
 }
+
+struct BumpAllocator {
+    next: usize,
+    heap_end: usize,
+}
+
+impl BumpAllocator {
+    const fn new() -> Self {
+        BumpAllocator {
+            next: 0,
+            heap_end: 0,
+        }
+    }
+    fn init(&mut self, heap_start: usize, heap_end: usize){
+        self.next = heap_start;
+        self.heap_end = heap_end;
+    }
+}
+
 #[unsafe(no_mangle)]
 pub extern "C" fn kernel_main() -> ! {
     let heap_start = unsafe { &__heap_start as *const u8 as usize };

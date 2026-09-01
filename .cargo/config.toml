@@ -3,3 +3,6 @@ target = "aarch64-unknown-none"
 
 [target.aarch64-unknown-none]
 
+[unstable]
+build-std = ["core", "alloc"]
+build-std-features = ["compiler-builtins-mem"]

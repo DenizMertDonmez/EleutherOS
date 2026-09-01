@@ -1,3 +1,6 @@
+# Telif Hakkı
+Copyright (C) 2026 Deniz Mert Dönmez
+
 # EleutherOS
 
 Yunanca "özgür" anlamına gelen eleutheros kelimesinden türetilmiştir.  
