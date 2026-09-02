@@ -6,7 +6,7 @@ extern crate alloc;
 
 core::arch::global_asm!(include_str!("../boot.S"));
 use core::panic::PanicInfo;
-use crate::drivers::uart::metin_yaz;
+use crate::drivers::uart::{self, metin_yaz};
 
 mod drivers {
     pub mod uart;
@@ -37,12 +37,24 @@ pub extern "C" fn kernel_main() -> ! {
     let heap_end   = unsafe { &__heap_end   as *const u8 as usize };
 
     
-    metin_yaz("Merhaba Dunya!\n");
+    metin_yaz("> ");
+    // Döngü dışında bir değişken: son karakter '\r' miydi?
+    let mut last_was_cr = false;
 
-    let mut v = alloc::vec::Vec::new();
-    v.push(42);
-    v.push(7);
-    metin_yaz("Vec olusturuldu!\n");
+    loop {
+        let c = uart::oku();
 
-    loop{}
+        if c == '\r' {
+            // Enter tuşu: yeni satıra geç, prompt yaz
+            uart::yazdir('\n');
+            uart::metin_yaz("> ");
+        } else if c == '\n' {
+            // \n gelirse yok say (çünkü Enter genellikle \r gönderir)
+            // burada hiçbir şey yapma
+        } else {
+            // normal karakteri geri yazdır
+            uart::yazdir(c);
+        }
+    }
 }
+
